@@ -38,6 +38,23 @@ runs:
           -v /tmp/hermes-test:/opt/data \
           "${{ inputs.image }}" --help
 
+    - name: hermes --version
+      shell: bash
+      run: |
+        docker run --rm \
+          -v /tmp/hermes-test:/opt/data \
+          "${{ inputs.image }}" --version
+
+    - name: /opt/data is writable by hermes user
+      shell: bash
+      run: |
+        docker run --rm \
+          --user 10000:10000 \
+          --entrypoint /bin/sh \
+          -v /tmp/hermes-test:/opt/data \
+          "${{ inputs.image }}" \
+          -c 'touch /opt/data/.hermes-smoke-write && test -w /opt/data/.hermes-smoke-write'
+
     - name: hermes dashboard --help
       shell: bash
       run: |
